@@ -4,15 +4,15 @@ FROM python:3.11-slim
 # Définir le répertoire de travail
 WORKDIR /app
 
-# Copier le fichier requirements.txt
-COPY requirements.txt .
-
 # Installer les dépendances système nécessaires
 RUN apt-get update && apt-get install -y \
-    build-essential \
     default-libmysqlclient-dev \
-    pkg-config \
+    gcc \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Copier le fichier requirements.txt
+COPY requirements.txt .
 
 # Installer les dépendances Python
 RUN pip install --no-cache-dir -r requirements.txt
