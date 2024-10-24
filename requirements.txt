@@ -24,7 +24,7 @@ importlib_metadata==7.1.0
 kombu==5.3.7
 lxml==5.2.2
 lxml_html_clean==0.1.1
-mysqlclient==2.2.4  # Garde ce paquet
+mysqlclient>=2.1,<2.3
 outcome==1.3.0.post0
 parse==1.20.1
 prompt-toolkit==3.0.43

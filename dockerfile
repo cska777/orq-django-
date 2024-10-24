@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     libmariadb-dev \
     gcc \
     pkg-config \
+    build-essential \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
