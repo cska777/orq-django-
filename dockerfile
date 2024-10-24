@@ -7,7 +7,9 @@ WORKDIR /app
 # Installer les dépendances système nécessaires
 RUN apt-get update && apt-get install -y \
     default-libmysqlclient-dev \
+    libmariadb-dev \
     gcc \
+    pkg-config \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
