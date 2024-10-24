@@ -12,24 +12,26 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
-from celery.schedules import crontab
-import orq_api_auth.tasks
+from dotenv import load_dotenv  # Assure-toi d'importer load_dotenv
+
+# Charger les variables d'environnement depuis le fichier .env
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-948)b_lkizmg=(5mdh6h$+x27xd$c9r6j9x1x!q8sw!#vwclxz'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-948)b_lkizmg=(5mdh6h$+x27xd$c9r6j9x1x!q8sw!#vwclxz')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'  # Convertir en booléen
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
+CSRF_TRUSTED_ORIGINS = ['https://127.0.0.1']
 
 # Application definition
 
@@ -78,25 +80,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'orq_api_auth.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'orq',
-        'USER' : "root",
-        'PASSWORD' : '',
-        'HOST' : '127.0.0.1',
-        'PORT' : "3306",
-        'OPTIONS' : {
-            'init_command' : 'SET sql_mode="STRICT_TRANS_TABLES" '
+        'NAME': os.getenv('DB_NAME'),  # Utilise la variable d'environnement
+        'USER': os.getenv('DB_USER'),  # Utilise la variable d'environnement
+        'PASSWORD':'',
+        'HOST': os.getenv('DB_HOST'),  # Utilise la variable d'environnement
+        'PORT': os.getenv('DB_PORT'),  # Utilise la variable d'environnement
+        'OPTIONS': {
+            'init_command': 'SET sql_mode="STRICT_TRANS_TABLES" '
         }
     }
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -116,7 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -127,7 +125,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -156,19 +153,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = os.environ.get('DJANGO_TIMEZONE', 'UTC')
-CELERY_BEAT_SCHEDULE = {
-    'scrape_allocine_every_wednesday': {
-        'task': 'orq_api_auth.tasks.scrape_allocine_task',
-        'schedule': crontab(day_of_week='wed', hour=0, minute=0),
-    },
-}
-
 # Use Redis as the message broker
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 
@@ -182,3 +166,15 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# Pour tester localement (affiche l'email dans la console)
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.example.com')  # Adresse mail
+EMAIL_PORT = os.getenv('EMAIL_PORT', '587')  # Port SMTP
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'chrhisoka@gmail.com')  # Utilise la variable d'environnement
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'tortuelutte')  # Utilise la variable d'environnement
+
+# Le lien dans l'email utilise le domaine du site
+DEFAULT_FROM_EMAIL = 'noreply@example.com'

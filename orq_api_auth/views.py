@@ -49,34 +49,6 @@ def user_auth(request):
     serializer = UserSerializer(instance=request.user)
     return Response(serializer.data)
 
-""" @api_view(['PUT', 'OPTIONS'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def update_user(request):
-    if request.method == "PUT" or request.method == "OPTIONS":
-        # Récupérer l'utilisateur qu'on veut modifier
-        user = request.user
-
-        # Vérifier si les données de mise à jour sont présentes dans la requête
-        if 'username' in request.data:
-            print("Username reçu :", request.data['username'])
-
-            user.username = request.data['username']
-
-            # Enregistrer les modifications de l'utilisateur
-            user.save()
-            print("Utilisateur mis à jour avec succès")
-
-            # Sérializer l'utilisateur mis à jour si nécessaire
-            serializer = UserSerializer(user)
-
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            print("Données de mise à jour manquantes dans la requête")
-            return Response("Données de mise à jour manquantes", status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response("Méthode non autorisée", status=status.HTTP_405_METHOD_NOT_ALLOWED)
- """
 
 @api_view(['POST','OPTIONS'])
 @authentication_classes([SessionAuthentication,TokenAuthentication])
@@ -161,7 +133,8 @@ def watchlist(request):
     else:
         return Response("Méthode non autorisée", status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
-@api_view(['DELETE','PUT'])
+
+@api_view(['DELETE','PUT', "PATCH"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def watchlist_update(request, oeuvre_id):
@@ -194,10 +167,24 @@ def watchlist_update(request, oeuvre_id):
                 watchlist_entry.duree = request.data['duree']
             if 'date_sortie' in request.data :
                 watchlist_entry.date_sortie = request.data['date_sortie']
+            if "note_utilisateur" in request.data:
+                watchlist_entry.note_utilisateur = request.data["note_utilisateur"]
             
             # Enregistrer les modifications
             watchlist_entry.save()
             return Response("Entrée de la watchlist mise à jour avec succès", status=status.HTTP_200_OK)
+        elif request.method == "PATCH" :
+            #Récupérer Utilisateur et entrée de la watchlist égal à l'id fourni
+            user_id = request.user.id
+            watchlist_entry = get_object_or_404(Watchlist, user_id=user_id, id = oeuvre_id)
+
+            # Mise à jour partielle des champs présents dans la requête
+            for field, value in request.data.items():
+                if hasattr(watchlist_entry, field):
+                    setattr(watchlist_entry, field, value)
+            
+            watchlist_entry.save()
+            return Response("Entrée de la watchlist partiellement mise à jour avec succès", status=status.HTTP_200_OK)
         else : 
             return Response("Méthode non autorisée", status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
