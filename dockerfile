@@ -17,15 +17,17 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-
 # Copier le fichier requirements.txt
 COPY requirements.txt .
 
 # Installer les dépendances Python
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier le reste de l'application
 COPY . .
 
+# Variable d'environnement pour le port
+ENV PORT=8000
+
 # Commande à exécuter à l'intérieur du conteneur
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "orq_api_auth.wsgi:application"]
+CMD gunicorn --bind 0.0.0.0:$PORT orq_api_auth.wsgi:application
