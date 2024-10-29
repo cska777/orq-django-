@@ -14,6 +14,10 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv  # Assure-toi d'importer load_dotenv
 
+import pymysql
+
+pymysql.install_as_MySQLdb()
+
 # Charger les variables d'environnement depuis le fichier .env
 load_dotenv()
 
@@ -84,17 +88,11 @@ WSGI_APPLICATION = 'orq_api_auth.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),  # Utilise la variable d'environnement
-        'USER': os.getenv('DB_USER'),  # Utilise la variable d'environnement
-        'PASSWORD':'',
-        'HOST': os.getenv('DB_HOST'),  # Utilise la variable d'environnement
-        'PORT': os.getenv('DB_PORT'),  # Utilise la variable d'environnement
-        'OPTIONS': {
-            'init_command': 'SET sql_mode="STRICT_TRANS_TABLES" '
-        }
-    }
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL'),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 
 # Password validation
@@ -129,7 +127,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -151,6 +150,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
     "http://localhost:3000",
+    "https://*.railway.app",  # Ajoutez ceci pour Railway
 ]
 
 # Use Redis as the message broker
