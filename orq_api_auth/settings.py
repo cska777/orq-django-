@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 from environ import Env
+import dj_database_url
 
 # Permettre la lecture du fichier .env pour récupérer les variables d'environnement
 env = Env()
@@ -38,7 +39,13 @@ else :
 ALLOWED_HOSTS = env("ALLOWED_HOSTS", default="").split(",")
 
 
-CSRF_TRUSTED_ORIGINS = ['https://127.0.0.1']
+CSRF_TRUSTED_ORIGINS = [
+    'https://127.0.0.1',               # Environnement local (développement)
+    'https://localhost',               # Environnement local (développement)
+    'https://cska777.github.io',       # Environnement de production
+    'https://*.railway.app',           # Si vous utilisez Railway, autoriser toutes les sous-domaines railway.app
+]
+
 
 # Application definition
 
@@ -91,22 +98,13 @@ WSGI_APPLICATION = 'orq_api_auth.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': env("DB_NAME"),
-        'USER': env("DB_USER"),
-        'PASSWORD':env("DB_PASSWORD"),
-        'HOST': env("DB_HOST"),
-        'PORT': env("DB_PORT"),  
-        'OPTIONS': {
-            'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"',
-            'charset': 'utf8mb4',
-            'use_unicode': True,
-        }
-    }
-}
 
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.getenv("DATABASE_URL"),  # Récupère la valeur de DATABASE_URL
+        conn_max_age=600,  # Garde la connexion ouverte pour de meilleures performances
+    )
+}
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
