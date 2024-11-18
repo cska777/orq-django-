@@ -12,14 +12,12 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv  # Assure-toi d'importer load_dotenv
+from environ import Env
 
-import pymysql
-
-pymysql.install_as_MySQLdb()
-
-# Charger les variables d'environnement depuis le fichier .env
-load_dotenv()
+# Permettre la lecture du fichier .env pour récupérer les variables d'environnement
+env = Env()
+Env.read_env()
+ENVIRONMENT = env("ENVIRONMENT", default="production")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,12 +26,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-948)b_lkizmg=(5mdh6h$+x27xd$c9r6j9x1x!q8sw!#vwclxz')
+SECRET_KEY = env("SK")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'  # Convertir en booléen
+if ENVIRONMENT == "development":
+    DEBUG = True
+else : 
+    DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+
+ALLOWED_HOSTS = env("ALLOWED_HOSTS", default="").split(",")
+
 
 CSRF_TRUSTED_ORIGINS = ['https://127.0.0.1']
 
@@ -88,11 +91,19 @@ WSGI_APPLICATION = 'orq_api_auth.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': env("DB_NAME"),
+        'USER': env("DB_USER"),
+        'PASSWORD':env("DB_PASSWORD"),
+        'HOST': env("DB_HOST"),
+        'PORT': env("DB_PORT"),  
+        'OPTIONS': {
+            'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"',
+            'charset': 'utf8mb4',
+            'use_unicode': True,
+        }
+    }
 }
 
 # Password validation
@@ -127,8 +138,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -150,31 +160,6 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
     "http://localhost:3000",
-    "https://*.railway.app",  # Ajoutez ceci pour Railway
 ]
 
-# Use Redis as the message broker
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
 
-# Use Redis as the result backend
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-
-# Enable Celery to accept tasks from remote workers
-CELERY_ACCEPT_CONTENT = ['json']
-
-# Enable Celery to serialize task results using JSON
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# Pour tester localement (affiche l'email dans la console)
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.example.com')  # Adresse mail
-EMAIL_PORT = os.getenv('EMAIL_PORT', '587')  # Port SMTP
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'chrhisoka@gmail.com')  # Utilise la variable d'environnement
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'tortuelutte')  # Utilise la variable d'environnement
-
-# Le lien dans l'email utilise le domaine du site
-DEFAULT_FROM_EMAIL = 'noreply@example.com'
