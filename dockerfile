@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     python3-dev \
     mysql-client \ 
-    && apt-get clean \
+#    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Copier le fichier requirements.txt
