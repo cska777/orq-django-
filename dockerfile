@@ -19,10 +19,9 @@ RUN pip install --upgrade pip
 # Copy the requirements file into the container
 COPY requirements.txt .
 
-# VARIABLES D'ENVIRONEMENT
-ENV MYSQLCLIENT_CFLAGS="-I/usr/include/mysql"
-ENV MYSQLCLIENT_LDFLAGS="-L/usr/lib/x86_64-linux-gnu -lmysqlclient"
-
+# VARIABLES D'ENVIRONEMENT pour spécifier les flags manuellement
+ENV MYSQLCLIENT_CFLAGS="-I/usr/include/mariadb -I/usr/include/mariadb/mysql"
+ENV MYSQLCLIENT_LDFLAGS="-L/usr/lib/aarch64-linux-gnu/ -lmariadb"
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --no-binary :all: mysqlclient==2.2.1 \
