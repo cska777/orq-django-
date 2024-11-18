@@ -16,7 +16,6 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     python3-dev \
     mysql-client \ 
-#    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Copier le fichier requirements.txt
@@ -34,5 +33,8 @@ RUN python manage.py collectstatic --noinput
 # Variable d'environnement pour le port 
 ENV PORT=8000
 
-# Commande à exécuter à l'intérieur du conteneur 
-CMD gunicorn --bind 0.0.0.0:$PORT orq_api_auth.wsgi:application
+# Exposer le port pour l'application
+EXPOSE 8000
+
+# Commande à exécuter à l'intérieur du conteneur
+CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "orq_api_auth.wsgi:application"]
