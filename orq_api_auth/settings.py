@@ -102,8 +102,15 @@ WSGI_APPLICATION = 'orq_api_auth.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-""" if ENVIRONMENT == "development" :
+if ENVIRONMENT == "production" :
     DATABASES = {
+            'default': dj_database_url.config(
+                default=os.getenv("DATABASE_URL"),  # Récupère la valeur de DATABASE_URL
+                conn_max_age=600,  # Garde la connexion ouverte pour de meilleures performances
+            )
+        }
+else:
+     DATABASES = {
         'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': env("DB_NAME"),
@@ -113,13 +120,7 @@ WSGI_APPLICATION = 'orq_api_auth.wsgi.application'
         'PORT': '8889',
         }
     }
-else : """
-DATABASES = {
-        'default': dj_database_url.config(
-            default=os.getenv("DATABASE_URL"),  # Récupère la valeur de DATABASE_URL
-            conn_max_age=600,  # Garde la connexion ouverte pour de meilleures performances
-        )
-    }
+
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
