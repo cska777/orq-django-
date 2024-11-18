@@ -1,10 +1,10 @@
-# Utiliser une image Python officielle
-FROM python:3.11
+# Utiliser une image Python officielle 
+FROM python:3.11  
 
-# Définir le répertoire de travail
-WORKDIR /app
+# Définir le répertoire de travail 
+WORKDIR /app  
 
-# Installer les dépendances système nécessaires
+# Installer les dépendances système nécessaires 
 RUN apt-get update && apt-get install -y \
     default-libmysqlclient-dev \
     libmariadb-dev \
@@ -20,14 +20,17 @@ RUN apt-get update && apt-get install -y \
 # Copier le fichier requirements.txt
 COPY requirements.txt .
 
-# Installer les dépendances Python
+# Installer les dépendances Python 
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier le reste de l'application
 COPY . .
 
-# Variable d'environnement pour le port
+# Exécuter collectstatic APRÈS avoir installé les dépendances
+RUN python manage.py collectstatic --noinput
+
+# Variable d'environnement pour le port 
 ENV PORT=8000
 
-# Commande à exécuter à l'intérieur du conteneur
+# Commande à exécuter à l'intérieur du conteneur 
 CMD gunicorn --bind 0.0.0.0:$PORT orq_api_auth.wsgi:application
