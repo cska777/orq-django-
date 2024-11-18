@@ -1,14 +1,14 @@
 # Utiliser une image Python officielle 
-FROM python:3.10  
+FROM python:3.11  
 
 # Définir le répertoire de travail 
 WORKDIR /app  
 
 # Installer les dépendances système nécessaires 
 RUN apt-get update && apt-get install -y \
-    mariadb-client \
-    libmariadb-dev-compat \
-    libmariadb-dev \
+    mysql-client \
+    libmysql-dev-compat \
+    libmysql-dev \
     gcc \
     pkg-config \
     build-essential \
