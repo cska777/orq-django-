@@ -6,15 +6,14 @@ WORKDIR /app
 
 # Installer les dépendances système nécessaires
 RUN apt-get update && apt-get install -y \
+    default-libmysqlclient-dev \
     libmariadb-dev \
-    mariadb-client \
     gcc \
     pkg-config \
     build-essential \
     libssl-dev \
     libffi-dev \
     python3-dev \
-    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Copier le fichier requirements.txt
