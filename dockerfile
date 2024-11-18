@@ -1,36 +1,38 @@
-FROM python:3.11-slim
+# Utiliser une image Python officielle 
+FROM python:3.11  
 
-WORKDIR /app
+# Définir le répertoire de travail 
+WORKDIR /app  
 
-# Installer les dépendances système
+# Installer les dépendances système nécessaires 
 RUN apt-get update && apt-get install -y \
-    default-libmysqlclient-dev \
-    libmariadb-dev \
+    mariadb-client \
     libmariadb-dev-compat \
+    libmariadb-dev \
     gcc \
     pkg-config \
     build-essential \
-    && apt-get clean \
+    libssl-dev \
+    libffi-dev \
+    python3-dev \
+    mysql-client \ 
+#    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copier requirements
+# Copier le fichier requirements.txt
 COPY requirements.txt .
 
-# Créer un environnement virtuel
-RUN python -m venv venv
-ENV PATH="/app/venv/bin:$PATH"
-
-# Installer mysqlclient et les dépendances
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir mysqlclient==2.1.1
+# Installer les dépendances Python 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copier l'application
+# Copier le reste de l'application
 COPY . .
 
-# Collectstatic
+# Exécuter collectstatic APRÈS avoir installé les dépendances
 RUN python manage.py collectstatic --noinput
 
-# Port et commande
+# Variable d'environnement pour le port 
 ENV PORT=8000
+
+# Commande à exécuter à l'intérieur du conteneur 
 CMD gunicorn --bind 0.0.0.0:$PORT orq_api_auth.wsgi:application
