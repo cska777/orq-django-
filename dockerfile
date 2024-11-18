@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libffi-dev \
     python3-dev \
+    mysql-client \ 
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
