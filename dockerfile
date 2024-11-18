@@ -12,7 +12,6 @@ RUN apt-get update && apt-get install -y \
     gcc \
     pkg-config \
     build-essential \
-    libmysqlclient-dev \
     libssl-dev \
     libffi-dev \
     python3-dev \
