@@ -7,8 +7,10 @@ WORKDIR /app
 # Install system dependencies for MySQL and Python compilation
 RUN apt-get update && apt-get install -y \
     default-libmysqlclient-dev \
-    build-essential \
+    libmariadb-dev \
+    libmariadb-dev-compat \
     pkg-config \
+    gcc \
     && rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip
@@ -18,7 +20,8 @@ RUN pip install --upgrade pip
 COPY requirements.txt .
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir mysqlclient==2.2.0 \
+    && pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code
 COPY . .
