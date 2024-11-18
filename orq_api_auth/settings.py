@@ -14,7 +14,10 @@ from pathlib import Path
 import os
 from environ import Env
 import dj_database_url
+import pymysql
+pymysql.install_as_MySQLdb()
 
+# Votre configuration de base de données reste identique
 
 # Permettre la lecture du fichier .env pour récupérer les variables d'environnement
 env = Env()
