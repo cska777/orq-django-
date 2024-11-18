@@ -7,14 +7,12 @@ WORKDIR /app
 # Installer les dépendances système nécessaires pour MariaDB
 RUN apt-get update && apt-get install -y \
     mariadb-client \
-    libmariadb-dev-compat \
     libmariadb-dev \
+    default-libmysqlclient-dev \
+    libmysqlclient-dev \
     gcc \
     pkg-config \
     build-essential \
-    libssl-dev \
-    libffi-dev \
-    python3-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -34,5 +32,5 @@ RUN python manage.py collectstatic --noinput
 ENV PORT=8000
 
 # Commande à exécuter à l'intérieur du conteneur
-CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "orq_api_auth.wsgi:application"]
+CMD gunicorn --bind 0.0.0.0:${PORT} orq_api_auth.wsgi:application
 
