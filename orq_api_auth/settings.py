@@ -162,6 +162,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
     "http://localhost:3000",
+    "https://cska777.github.io",
 ]
 
 
