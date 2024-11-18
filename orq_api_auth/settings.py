@@ -43,7 +43,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://127.0.0.1',               # Environnement local (développement)
     'https://localhost',               # Environnement local (développement)
     'https://cska777.github.io',       # Environnement de production
-    'https://*.railway.app',           # Si vous utilisez Railway, autoriser toutes les sous-domaines railway.app
+    'https://*.railway.app',           # Autoriser tous les sous-domaines railway.app
 ]
 
 
