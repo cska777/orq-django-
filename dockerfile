@@ -4,12 +4,8 @@ FROM python:3.12
 # Set the working directory in the container
 WORKDIR /app
 
-# Install system dependencies for MySQL and Python compilation
+# Install system dependencies (no need for MySQL client libraries anymore)
 RUN apt-get update && apt-get install -y \
-    default-libmysqlclient-dev \
-    libmariadb-dev \
-    libmariadb-dev-compat \
-    pkg-config \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
@@ -19,13 +15,8 @@ RUN pip install --upgrade pip
 # Copy the requirements file into the container
 COPY requirements.txt .
 
-# VARIABLES D'ENVIRONEMENT pour spécifier les flags manuellement
-ENV MYSQLCLIENT_CFLAGS="-I/usr/include/mariadb -I/usr/include/mariadb/mysql"
-ENV MYSQLCLIENT_LDFLAGS="-L/usr/lib/aarch64-linux-gnu/ -lmariadb"
-
 # Install Python dependencies
-RUN pip install --no-cache-dir --no-binary :all: mysqlclient==2.2.1 \
-    && pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code
 COPY . .
