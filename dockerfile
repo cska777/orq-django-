@@ -5,14 +5,23 @@ WORKDIR /app
 # Installer les dépendances système
 RUN apt-get update && apt-get install -y \
     default-libmysqlclient-dev \
+    libmariadb-dev \
+    libmariadb-dev-compat \
     gcc \
     pkg-config \
     build-essential \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copier requirements et installer les dépendances
+# Copier requirements
 COPY requirements.txt .
+
+# Créer un environnement virtuel
+RUN python -m venv venv
+ENV PATH="/app/venv/bin:$PATH"
+
+# Installer mysqlclient et les dépendances
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir mysqlclient==2.1.1
 RUN pip install --no-cache-dir -r requirements.txt
 
