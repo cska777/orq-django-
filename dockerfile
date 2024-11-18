@@ -6,8 +6,8 @@ WORKDIR /app
 
 # Installer les dépendances système nécessaires
 RUN apt-get update && apt-get install -y \
-    default-libmysqlclient-dev \
     libmariadb-dev \
+    mariadb-client \
     gcc \
     pkg-config \
     build-essential \
