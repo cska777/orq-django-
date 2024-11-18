@@ -1,36 +1,29 @@
-# Utiliser une image Python officielle 
-FROM python:3.11  
+FROM python:3.11
 
-# Définir le répertoire de travail 
-WORKDIR /app  
+WORKDIR /app
 
-# Installer les dépendances système nécessaires pour MariaDB
+# Installer les dépendances système
 RUN apt-get update && apt-get install -y \
-    mariadb-client \
-    libmariadb-dev \
     default-libmysqlclient-dev \
-    libmysqlclient-dev \
     gcc \
     pkg-config \
     build-essential \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copier le fichier requirements.txt
+# Copier requirements et installer les dépendances Python
 COPY requirements.txt .
-
-# Installer les dépendances Python
+RUN pip install --no-cache-dir mysqlclient==2.1.1 
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier le reste de l'application
 COPY . .
 
-# Exécuter collectstatic APRÈS avoir installé les dépendances
+# Exécuter collectstatic
 RUN python manage.py collectstatic --noinput
 
 # Variable d'environnement pour le port
 ENV PORT=8000
 
-# Commande à exécuter à l'intérieur du conteneur
-CMD gunicorn --bind 0.0.0.0:${PORT} orq_api_auth.wsgi:application
-
+# Commande à exécuter
+CMD ["gunicorn", "--bind", "0.0.0.0:${PORT}", "orq_api_auth.wsgi:application"]
