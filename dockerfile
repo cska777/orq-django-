@@ -1,44 +1,39 @@
-# Image Python officielle
+# Use an official Python runtime as a parent image
 FROM python:3.12
 
-# Installer les dépendances système nécessaires
+# Set the working directory in the container
+WORKDIR /app
+
+# Install system dependencies for MySQL and Python compilation
 RUN apt-get update && apt-get install -y \
     default-libmysqlclient-dev \
     libmariadb-dev \
     libmariadb-dev-compat \
     pkg-config \
     gcc \
-    build-essential \
     && rm -rf /var/lib/apt/lists/*
-
-# Définir le répertoire de travail
-WORKDIR /app
 
 # Upgrade pip
 RUN pip install --upgrade pip
 
-# Copier requirements
+# Copy the requirements file into the container
 COPY requirements.txt .
 
-# Variables d'environnement pour forcer la configuration MySQL
-ENV MYSQLCLIENT_CFLAGS="-I/usr/include/mysql" \
-    MYSQLCLIENT_LDFLAGS="-L/usr/lib/x86_64-linux-gnu -lmysqlclient"
-
-# Installation avec configuration explicite
+# Install Python dependencies
 RUN pip install --no-cache-dir mysqlclient==2.2.1 \
     && pip install --no-cache-dir -r requirements.txt
 
-# Copier le reste du projet
+# Copy the rest of the application code
 COPY . .
 
-# Collecte des fichiers statiques
+# Run collectstatic after installing dependencies
 RUN python manage.py collectstatic --noinput
 
-# Variable d'environnement pour le port
+# Set environment variable for the port
 ENV PORT=8000
 
-# Exposer le port
+# Expose the port the app runs on
 EXPOSE $PORT
 
-# Commande de démarrage
+# Use gunicorn to serve the application
 CMD gunicorn --bind 0.0.0.0:$PORT orq_api_auth.wsgi:application
