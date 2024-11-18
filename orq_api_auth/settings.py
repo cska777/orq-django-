@@ -102,13 +102,24 @@ WSGI_APPLICATION = 'orq_api_auth.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv("DATABASE_URL"),  # Récupère la valeur de DATABASE_URL
-        conn_max_age=600,  # Garde la connexion ouverte pour de meilleures performances
-    )
-}
+if ENVIRONMENT == "development" :
+    DATABASES = {
+        'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': env("DB_NAME"),
+        'USER': env("DB_USER"),
+        'PASSWORD': env("DB_PASSWORD"),
+        'HOST': 'localhost',
+        'PORT': '8889',
+        }
+    }
+else :
+        DATABASES = {
+        'default': dj_database_url.config(
+            default=os.getenv("DATABASE_URL"),  # Récupère la valeur de DATABASE_URL
+            conn_max_age=600,  # Garde la connexion ouverte pour de meilleures performances
+        )
+    }
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -159,12 +170,22 @@ REST_FRAMEWORK = {
    ),
 }
 
-CORS_ALLOW_CREDENTIALS = True
-
+# Autoriser toutes les méthodes HTTP dans CORS (pour les requêtes préalables)
+CORS_ALLOW_ALL_ORIGINS = False  # Interdit toutes les origines sauf celles définies ci-dessous.
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
-    "http://localhost:3000",
-    "https://cska777.github.io",
+    "http://localhost:3000",  # Frontend local
+    "https://cska777.github.io",  # Frontend en production
+    "http://localhost:8889"
 ]
+
+# Autoriser les en-têtes spécifiques pour CORS
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'authorization',
+    'accept',
+    'x-csrftoken',
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 
