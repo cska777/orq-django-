@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11-slim
+FROM python:3.12
 
 # Set the working directory in the container
 WORKDIR /app
@@ -20,7 +20,7 @@ RUN pip install --upgrade pip
 COPY requirements.txt .
 
 # Install Python dependencies
-RUN pip install --no-cache-dir mysqlclient==2.2.0 \
+RUN pip install --no-cache-dir mysqlclient==2.2.1 \
     && pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code

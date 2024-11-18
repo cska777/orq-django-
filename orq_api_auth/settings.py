@@ -15,6 +15,7 @@ import os
 from environ import Env
 import dj_database_url
 
+
 # Permettre la lecture du fichier .env pour récupérer les variables d'environnement
 env = Env()
 Env.read_env()
