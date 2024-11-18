@@ -1,36 +1,36 @@
-# Utiliser une image Python officielle 
-FROM python:3.11  
+# Use an official Python runtime as a parent image
+FROM python:3.11-slim
 
-# Définir le répertoire de travail 
-WORKDIR /app  
+# Set the working directory in the container
+WORKDIR /app
 
-# Installer les dépendances système nécessaires 
+# Install system dependencies for MySQL and Python compilation
 RUN apt-get update && apt-get install -y \
-    mysql-client \
-    libmysqlclient-dev \
-    gcc \
-    pkg-config \
+    default-libmysqlclient-dev \
     build-essential \
-    libssl-dev \
-    libffi-dev \
-    python3-dev \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
+# Upgrade pip
+RUN pip install --upgrade pip
 
-# Copier le fichier requirements.txt
+# Copy the requirements file into the container
 COPY requirements.txt .
 
-# Installer les dépendances Python 
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copier le reste de l'application
+# Copy the rest of the application code
 COPY . .
 
-# Exécuter collectstatic APRÈS avoir installé les dépendances
+# Run collectstatic after installing dependencies
 RUN python manage.py collectstatic --noinput
 
-# Variable d'environnement pour le port 
+# Set environment variable for the port
 ENV PORT=8000
 
-# Commande à exécuter à l'intérieur du conteneur 
+# Expose the port the app runs on
+EXPOSE $PORT
+
+# Use gunicorn to serve the application
 CMD gunicorn --bind 0.0.0.0:$PORT orq_api_auth.wsgi:application
