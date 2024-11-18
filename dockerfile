@@ -24,7 +24,7 @@ ENV MYSQLCLIENT_CFLAGS="-I/usr/include/mariadb -I/usr/include/mariadb/mysql"
 ENV MYSQLCLIENT_LDFLAGS="-L/usr/lib/aarch64-linux-gnu/ -lmariadb"
 
 # Install Python dependencies
-RUN pip install --no-cache-dir --no-binary :all: mysqlclient==2.1.0 \
+RUN pip install --no-cache-dir --no-binary :all: mysqlclient==2.2.1 \
     && pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code
