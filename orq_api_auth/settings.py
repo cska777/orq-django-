@@ -23,6 +23,7 @@ pymysql.install_as_MySQLdb()
 env = Env()
 Env.read_env()
 ENVIRONMENT = env("ENVIRONMENT", default="production")
+print(f"ENVIRONMENT is set to: {ENVIRONMENT}")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -112,13 +113,13 @@ if ENVIRONMENT == "production" :
 else:
      DATABASES = {
         'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': env("DB_NAME"),
-        'USER': env("DB_USER"),
-        'PASSWORD': env("DB_PASSWORD"),
-        'HOST': 'localhost',
-        'PORT': '8889',
-        }
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': env("DB_NAME"),
+            'USER': env("DB_USER"),
+            'PASSWORD': env("DB_PASSWORD"),
+            'HOST': 'localhost',
+            'PORT': '8889',
+            }
     }
 
 # Password validation
