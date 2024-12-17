@@ -8,7 +8,6 @@ urlpatterns = [
     path('test_token/', views.test_token, name='test_token'),
     path('watchlist/', views.watchlist, name='watchlist'),
     path('watchlist/<int:oeuvre_id>/', views.watchlist_update, name='watchlist_update'),
-    path('films/', views.films, name='films'),
     path('change_password/', views.change_password, name='change_password'),
     path('user/auth/', views.user_auth, name='user_auth'),
 

@@ -2,7 +2,7 @@ import os
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .serializers import UserSerializer, WatchlistSerializer, FilmsSerializer
+from .serializers import UserSerializer, WatchlistSerializer
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
@@ -15,7 +15,6 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 
 from watchlist.models import Watchlist
-from films.models import Films
 
 
 
@@ -210,15 +209,5 @@ def note_entree_watchlist(request, oeuvre_id):
 
 
 
-@api_view(["GET"])
-def films(request):
-    # Récupérez tous les objets Films
-    films = Films.objects.all()
-
-    # Serializer les objets Films
-    serializer =  FilmsSerializer(films, many=True)
-
-    # Renvoyer les données serialisées en réponse
-    return Response(serializer.data)
 
     
