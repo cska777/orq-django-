@@ -96,7 +96,9 @@ def watchlist(request):
         date_sortie = request.data.get('date_sortie')
         synopsis = request.data.get('synopsis')
         genres = request.data.get('genres')
-        press_score = request.data.get('press_score')
+        user_score = request.data.get('user_score')
+        acteurs = request.data.get('acteurs')
+        realisateurs = request.data.get('realisateurs') 
 
 
         # Vérifier si les données requises sont présentes
@@ -121,7 +123,9 @@ def watchlist(request):
             date_sortie = date_sortie,
             synopsis = synopsis,
             genres = genres,
-            press_score = press_score
+            user_score = user_score,
+            acteurs = acteurs,
+            realisateurs = realisateurs 
         )
         return Response("Série ajoutée avec succès à la watchlist", status=status.HTTP_201_CREATED)
     elif request.method == 'GET':

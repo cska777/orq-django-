@@ -18,8 +18,10 @@ class Watchlist(models.Model):
     date_sortie = models.IntegerField(default=0, null=True)
     synopsis = models.CharField(max_length = 3000, null = True)
     genres = models.CharField(max_length = 255, null=True)
-    press_score = models.IntegerField(default = 0)
+    user_score = models.IntegerField(default = 0)
     note_utilisateur = models.IntegerField(default = 0)
+    acteurs = models.CharField(max_length = 255, null=True)
+    realisateurs = models.CharField(max_length = 255, null=True)
     
     class Meta:
         app_label = 'watchlist'
